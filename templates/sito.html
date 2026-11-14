@@ -1,0 +1,99 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">Sul sito</h1><p class="lead">Cosa vede chi apre il modulo: porta, avvisi, blocchi di testo, campi e consensi.</p></div></header>
+{% if s.can_edit %}
+<form method="post" action="/admin/sito" class="stack">
+  <label class="field"><span class="field__label">Porta</span>
+    <select class="select" name="door">
+      <option value="open" {% if door == "open" %}selected{% endif %}>Aperta</option>
+      <option value="pause" {% if door == "pause" %}selected{% endif %}>In pausa</option>
+      <option value="closed" {% if door == "closed" %}selected{% endif %}>Chiusa</option>
+    </select>
+  </label>
+  <label class="field"><span class="field__label">Messaggio quando non è aperta</span><textarea class="textarea" name="closed_message">{{ closed_message }}</textarea></label>
+  <label class="field"><span class="field__label">Conto alla rovescia fino a</span><input class="input" type="datetime-local" name="countdown" value="{{ countdown }}"></label>
+  <label class="check"><input type="checkbox" name="show_countdown" value="1" {% if show_countdown %}checked{% endif %}> Mostra il conto alla rovescia</label>
+  <label class="check"><input type="checkbox" name="show_spots" value="1" {% if show_spots %}checked{% endif %}> Mostra i posti liberi</label>
+  <label class="field"><span class="field__label">Origini che possono incorporare il modulo</span><textarea class="textarea" name="origins">{{ origins }}</textarea><span class="field__hint">Una per riga, con https://. Vuoto: solo questo sito.</span></label>
+  <button class="btn btn--primary" type="submit">Salva il sito</button>
+</form>
+{% endif %}
+<section class="section"><div class="section__head"><h2 class="h-section">Avvisi</h2></div>
+{% for n in notices %}
+<form method="post" action="/admin/sito/avviso" class="stack">
+  <input type="hidden" name="id" value="{{ n.id }}">
+  <label class="field"><span class="field__label">Titolo</span><input class="input" name="title" value="{{ n.title }}"></label>
+  <label class="field"><span class="field__label">Testo</span><textarea class="textarea" name="body">{{ n.body }}</textarea></label>
+  <label class="field"><span class="field__label">Tono</span><select class="select" name="tone"><option value="info" {% if n.tone == "info" %}selected{% endif %}>Informazione</option><option value="attention" {% if n.tone == "attention" %}selected{% endif %}>Attenzione</option><option value="danger" {% if n.tone == "danger" %}selected{% endif %}>Errore</option></select></label>
+  <label class="field"><span class="field__label">Da</span><input class="input" type="datetime-local" name="starts" value="{{ n.starts }}"></label>
+  <label class="field"><span class="field__label">A</span><input class="input" type="datetime-local" name="ends" value="{{ n.ends }}"></label>
+  <label class="check"><input type="checkbox" name="visible" value="1" {% if n.visible %}checked{% endif %}> Visibile</label>
+  {% if s.can_edit %}<button class="btn" type="submit">Salva l'avviso</button>{% endif %}
+</form>
+{% if s.can_edit %}
+<form method="post" action="/admin/sito/avviso/muovi"><input type="hidden" name="id" value="{{ n.id }}"><input type="hidden" name="dir" value="-1"><button class="btn btn--ghost btn--sm" type="submit">Sposta su</button></form>
+<form method="post" action="/admin/sito/avviso/muovi"><input type="hidden" name="id" value="{{ n.id }}"><input type="hidden" name="dir" value="1"><button class="btn btn--ghost btn--sm" type="submit">Sposta giù</button></form>
+<form method="post" action="/admin/sito/avviso/elimina"><input type="hidden" name="id" value="{{ n.id }}"><button class="btn btn--ghost btn--sm" type="submit">Togli l'avviso</button></form>
+{% endif %}
+{% endfor %}
+{% if s.can_edit %}
+<h3 class="h-group">Nuovo avviso</h3>
+<form method="post" action="/admin/sito/avviso" class="stack">
+  <label class="field"><span class="field__label">Titolo</span><input class="input" name="title" required></label>
+  <label class="field"><span class="field__label">Testo</span><textarea class="textarea" name="body"></textarea></label>
+  <label class="field"><span class="field__label">Tono</span><select class="select" name="tone"><option value="info">Informazione</option><option value="attention">Attenzione</option><option value="danger">Errore</option></select></label>
+  <label class="check"><input type="checkbox" name="visible" value="1" checked> Visibile</label>
+  <button class="btn" type="submit">Aggiungi l'avviso</button>
+</form>
+{% endif %}
+</section>
+<section class="section"><div class="section__head"><h2 class="h-section">Blocchi nel modulo</h2></div>
+{% for b in blocks %}
+<form method="post" action="/admin/sito/blocco" class="stack">
+  <input type="hidden" name="id" value="{{ b.id }}">
+  <label class="field"><span class="field__label">Titolo</span><input class="input" name="title" value="{{ b.title }}"></label>
+  <label class="field"><span class="field__label">Testo</span><textarea class="textarea" name="body">{{ b.body }}</textarea></label>
+  <label class="field"><span class="field__label">Posizione</span><select class="select" name="placement">
+    <option value="before_form" {% if b.placement == "before_form" %}selected{% endif %}>Prima del modulo</option>
+    <option value="after_packages" {% if b.placement == "after_packages" %}selected{% endif %}>Prima dei pacchetti</option>
+    <option value="before_submit" {% if b.placement == "before_submit" %}selected{% endif %}>Prima dell'invio</option>
+  </select></label>
+  <label class="check"><input type="checkbox" name="visible" value="1" {% if b.visible %}checked{% endif %}> Visibile</label>
+  {% if s.can_edit %}<button class="btn" type="submit">Salva il blocco</button>{% endif %}
+</form>
+{% if s.can_edit %}<form method="post" action="/admin/sito/blocco/elimina"><input type="hidden" name="id" value="{{ b.id }}"><button class="btn btn--ghost btn--sm" type="submit">Togli il blocco</button></form>{% endif %}
+{% endfor %}
+{% if s.can_edit %}
+<form method="post" action="/admin/sito/blocco" class="stack">
+  <label class="field"><span class="field__label">Titolo</span><input class="input" name="title"></label>
+  <label class="field"><span class="field__label">Testo</span><textarea class="textarea" name="body" required></textarea></label>
+  <label class="field"><span class="field__label">Posizione</span><select class="select" name="placement"><option value="before_form">Prima del modulo</option><option value="after_packages">Prima dei pacchetti</option><option value="before_submit">Prima dell'invio</option></select></label>
+  <label class="check"><input type="checkbox" name="visible" value="1" checked> Visibile</label>
+  <button class="btn" type="submit">Aggiungi il blocco</button>
+</form>
+{% endif %}
+</section>
+<section class="section"><div class="section__head"><h2 class="h-section">Campi facoltativi</h2></div>
+{% for f in fields %}
+<form method="post" action="/admin/sito/campo" class="stack">
+  <input type="hidden" name="key" value="{{ f.key }}">
+  <label class="field"><span class="field__label">Etichetta di {{ f.key }}</span><input class="input" name="label" value="{{ f.label }}"></label>
+  <label class="check"><input type="checkbox" name="enabled" value="1" {% if f.enabled %}checked{% endif %}> Nel modulo</label>
+  <label class="check"><input type="checkbox" name="required" value="1" {% if f.required %}checked{% endif %}> Obbligatorio</label>
+  {% if s.can_edit %}<button class="btn" type="submit">Salva il campo</button>{% endif %}
+</form>
+{% endfor %}
+</section>
+<section class="section"><div class="section__head"><h2 class="h-section">Consensi</h2></div>
+{% for c in consents %}
+<p>{{ c.label }} {% if c.required %}· obbligatorio{% endif %}</p>
+{% if s.can_edit %}<form method="post" action="/admin/sito/consenso/elimina"><input type="hidden" name="id" value="{{ c.id }}"><button class="btn btn--ghost btn--sm" type="submit">Togli il consenso</button></form>{% endif %}
+{% endfor %}
+{% if s.can_edit %}
+<form method="post" action="/admin/sito/consenso" class="stack">
+  <label class="field"><span class="field__label">Testo</span><input class="input" name="label" required></label>
+  <label class="check"><input type="checkbox" name="required" value="1" checked> Obbligatorio</label>
+  <button class="btn" type="submit">Aggiungi il consenso</button>
+</form>
+{% endif %}
+</section>
+{% include "shell_end.html" %}

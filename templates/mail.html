@@ -1,0 +1,10 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">Mail</h1><p class="lead">Oggetto, HTML e testo. L'anteprima usa una scheda di esempio.</p></div></header>
+<div class="tbl-wrap"><table class="tbl as-cards"><thead><tr><th>Modello</th><th>Oggetto</th><th>Stato</th></tr></thead><tbody>
+{% for r in rows %}<tr>
+  <td data-label="Modello"><a href="/admin/mail/{{ r.key }}">{{ r.name }}</a></td>
+  <td data-label="Oggetto">{{ r.subject }}</td>
+  <td data-label="Stato">{% if r.on %}Attivo{% else %}Spento{% endif %}</td>
+</tr>{% endfor %}
+</tbody></table></div>
+{% include "shell_end.html" %}

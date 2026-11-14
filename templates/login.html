@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Entra · {{ name }}</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/tokens.css"><link rel="stylesheet" href="/static/quadra.css"><link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main class="public public--narrow">
+  <h1 class="h-page">Entra nel pannello</h1>
+  <p class="lead">Ti mandiamo un codice a 6 cifre. Vale 10 minuti e si usa una volta sola.</p>
+  {% if error != "" %}<div class="callout callout--danger"><div class="callout__body"><p>{{ error }}</p></div></div>{% endif %}
+  {% if step == "code" %}
+  <form method="post" action="/admin/login/codice" class="stack">
+    <input type="hidden" name="email" value="{{ email }}">
+    <label class="field"><span class="field__label">Codice</span><input class="input" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
+    <button class="btn btn--primary" type="submit">Entra</button>
+  </form>
+  <p class="small faint">Codice per {{ email }}.</p>
+  {% else %}
+  <form method="post" action="/admin/login" class="stack">
+    <label class="field"><span class="field__label">Email</span><input class="input" type="email" name="email" autocomplete="username" required></label>
+    <button class="btn btn--primary" type="submit">Invia il codice</button>
+  </form>
+  {% endif %}
+</main>
+</body></html>

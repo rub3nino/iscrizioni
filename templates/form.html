@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iscrizione · {{ name }}</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/tokens.css"><link rel="stylesheet" href="/static/quadra.css"><link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<main class="public" id="modulo">
+  <h1 class="h-page">{{ name }}</h1>
+  {% if show_spots %}<p class="spots">Posti liberi <b class="num">{{ spots }}</b></p>{% endif %}
+  {% if show_countdown %}<p>Le iscrizioni aprono il <time datetime="{{ countdown_iso }}" data-countdown>{{ countdown_label }}</time>.</p>{% endif %}
+  {% for n in notices %}<div class="callout callout--{{ n.tone }}"><div class="callout__body"><p><b>{{ n.title }}</b> {{ n.body }}</p></div></div>{% endfor %}
+  {% for b in blocks_before %}{% if b.title != "" %}<h2 class="h-section">{{ b.title }}</h2>{% endif %}<p>{{ b.body }}</p>{% endfor %}
+  {% if door != "open" %}
+    <div class="callout"><div class="callout__body"><p>{{ closed_message }}</p></div></div>
+  {% else %}
+  {% if error != "" %}<div class="callout callout--danger"><div class="callout__body"><p>{{ error }}</p></div></div>{% endif %}
+  <form method="post" action="/modulo" class="stack">
+    <div class="hp" aria-hidden="true"><label>Sito<input name="sito_web" tabindex="-1" autocomplete="off"></label></div>
+    <label class="field"><span class="field__label">Nome</span><input class="input" name="first_name" required autocomplete="given-name"></label>
+    <label class="field"><span class="field__label">Cognome</span><input class="input" name="last_name" required autocomplete="family-name"></label>
+    <label class="field"><span class="field__label">Data di nascita</span><input class="input" type="date" name="birth_date" required></label>
+    <label class="field"><span class="field__label">Email</span><input class="input" type="email" name="email" required autocomplete="email"></label>
+    <label class="field"><span class="field__label">Telefono</span><input class="input" name="phone" required autocomplete="tel"></label>
+    {% for f in fields %}
+      {% if f.key == "gender" %}
+      <label class="field"><span class="field__label">{{ f.label }}</span>
+        <select class="select" name="gender" {% if f.required %}required{% endif %}><option value="">—</option><option value="f">Donna</option><option value="m">Uomo</option><option value="x">Preferisco non indicarlo</option></select></label>
+      {% else %}
+      <label class="field"><span class="field__label">{{ f.label }}</span>
+        {% if f.key == "notes" || f.key == "allergies" %}<textarea class="textarea" name="{{ f.key }}" {% if f.required %}required{% endif %}></textarea>{% else %}<input class="input" name="{{ f.key }}" {% if f.required %}required{% endif %}>{% endif %}
+      </label>
+      {% endif %}
+    {% endfor %}
+    <fieldset class="plain">
+      <legend class="h-group">Se ha meno di {{ minor_age }} anni</legend>
+      <p class="small faint">Servono i dati di chi ne è responsabile, e il suo consenso.</p>
+      <label class="field"><span class="field__label">Nome di chi è responsabile</span><input class="input" name="parent_name"></label>
+      <label class="field"><span class="field__label">Telefono</span><input class="input" name="parent_phone"></label>
+      <label class="check"><input type="checkbox" name="parent_consent" value="1"> Do il consenso come responsabile</label>
+    </fieldset>
+    {% for b in blocks_mid %}{% if b.title != "" %}<h2 class="h-section">{{ b.title }}</h2>{% endif %}<p>{{ b.body }}</p>{% endfor %}
+    <fieldset class="plain"><legend class="h-group">Pacchetto</legend>
+      {% for p in packages %}
+      <label class="choice">
+        <input type="radio" name="package_id" value="{{ p.id }}" {% if !p.enabled %}disabled{% endif %}>
+        <span><b>{{ p.name }}</b> <span class="num">{{ p.price }}</span></span>
+        {% if p.description != "" %}<small>{{ p.description }}</small>{% endif %}
+        {% if !p.enabled && p.label != "" %}<small>{{ p.label }}</small>{% endif %}
+      </label>
+      {% endfor %}
+    </fieldset>
+    {% for b in blocks_end %}{% if b.title != "" %}<h2 class="h-section">{{ b.title }}</h2>{% endif %}<p>{{ b.body }}</p>{% endfor %}
+    {% for c in consents %}<label class="check"><input type="checkbox" name="consents" value="{{ c.id }}" {% if c.required %}required{% endif %}> {{ c.label }}</label>{% endfor %}
+    <button class="btn btn--primary" type="submit">Invia l'iscrizione</button>
+  </form>
+  {% endif %}
+</main>
+<script src="/static/form.js"></script>
+</body></html>

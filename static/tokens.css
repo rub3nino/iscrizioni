@@ -1,0 +1,128 @@
+/* Venduto come sistema visivo (ruoli, spazio, tipo). Questo modulo non è Quadra JET e non ne usa il marchio. */
+/* ==========================================================================
+   Quadra JET — Token del design system  (v1.0 · ottobre 2026)
+   Fonte normativa: jet-ui/DESIGN.md. Ogni valore qui ha un ruolo, non un nome
+   di colore: si cambia il ruolo, non si inventano esadecimali nei componenti.
+   Contrasti verificati (WCAG 2.2) con jet-ui/strumenti/contrasti.py.
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* --- Superfici: carta calda, appena tinta (tono 85 = carta, non crema) --- */
+  --surface-page:     oklch(0.993 0.002 85);   /* #fdfdfb  fondo dell'area di lavoro          */
+  --surface-raised:   oklch(1 0 0);            /* #ffffff  pannelli, tabelle, input             */
+  --surface-sunken:   oklch(0.972 0.004 85);   /* #f7f6f3  barra laterale, intestazioni tabella */
+  --surface-hover:    oklch(0.955 0.005 85);   /* #f2f0ec  hover di riga e voce menu            */
+  --surface-pressed:  oklch(0.935 0.006 85);   /* #ebe9e4  premuto / riga attiva senza focus    */
+  --surface-inverse:  oklch(0.22 0.008 85);    /* #1c1a16  azione primaria, tooltip             */
+
+  /* --- Linee --- */
+  --line-subtle:   oklch(0.912 0.005 85);      /* #e3e2de  divisori interni (1.3:1, decorativo) */
+  --line-strong:   oklch(0.845 0.006 85);      /* #ceccc8  bordi pannello                       */
+  --line-control:  oklch(0.68 0.006 85);       /* #9a9894  bordo input e checkbox (≈3:1)        */
+
+  /* --- Testo --- */
+  --text-primary:   oklch(0.255 0.008 85);     /* #25231f  15.8:1 */
+  --text-secondary: oklch(0.45 0.009 85);      /* #575550   7.4:1 */
+  --text-tertiary:  oklch(0.535 0.008 85);     /* #6f6d68   5.2:1 (4.8:1 sul fondo laterale) */
+  --text-on-inverse: oklch(0.985 0.002 85);
+  --text-on-accent:  oklch(1 0 0);
+
+  /* --- Accento unico: blu (azione, selezione, focus, «In esame») --- */
+  --accent:        oklch(0.53 0.19 257);       /* #0066d6  5.4:1 */
+  --accent-hover:  oklch(0.47 0.18 257);       /* #0055bc */
+  --accent-text:   oklch(0.48 0.17 257);       /* #0159ba  link e testo accento */
+  --accent-soft:   oklch(0.962 0.022 257);     /* #e9f3ff  riga selezionata */
+  --focus-ring:    oklch(0.60 0.17 257);       /* #337ee3  4:1 sul bianco */
+
+  /* --- Stati di revisione. Mai solo colore: sempre con parola o icona --- */
+  /* Ambra = «selezionata / da esaminare»: richiede attenzione, non è un errore. */
+  --attention:       oklch(0.66 0.16 52);      /* #dc701c  barre e segni grafici (3.3:1) */
+  --attention-text:  oklch(0.50 0.12 55);      /* #964d09  6.3:1 */
+  --attention-soft:  oklch(0.968 0.035 75);    /* #fff2db */
+  /* Rosso = «eccezione confermata» o errore bloccante. Raro per scelta. */
+  --danger:          oklch(0.56 0.19 27);      /* #cc3430 */
+  --danger-text:     oklch(0.50 0.17 27);      /* #b02b27  6.6:1 */
+  --danger-soft:     oklch(0.966 0.02 25);     /* #ffefed */
+  /* Verde = «chiarita», verifica superata. */
+  --success:         oklch(0.58 0.13 152);     /* #2e9052  4:1 */
+  --success-text:    oklch(0.46 0.10 152);     /* #22683b  6.8:1 */
+  --success-soft:    oklch(0.965 0.03 152);    /* #e5faea */
+  /* Neutro = «non pertinente», «non eseguibile», «spento». */
+  --neutral-mark:    oklch(0.80 0.006 85);     /* #bfbdb9  barre sotto soglia (decorative + etichetta) */
+
+  /* --- Tipografia: la stessa pila di Notion e di Apple. Nessun font da scaricare. --- */
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Text", "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", "Segoe UI Mono", Menlo, Consolas, monospace;
+
+  /* Scala fissa in rem (radice 16px). Rapporto ~1.2; 14→20 salta di 1.43× (gerarchia netta). */
+  --text-xs:   0.75rem;    /* 12  metadati, note di colonna           */
+  --text-sm:   0.8125rem;  /* 13  tabelle dense, chip, etichette      */
+  --text-base: 0.875rem;   /* 14  testo dell'interfaccia              */
+  --text-md:   1rem;       /* 16  input, prosa, testo su mobile       */
+  --text-lg:   1.25rem;    /* 20  titolo di sezione                   */
+  --text-xl:   1.5rem;     /* 24  titolo di pagina                    */
+  --text-2xl:  1.875rem;   /* 30  titolo di accesso / brand           */
+
+  --leading-tight: 1.2;
+  --leading-snug:  1.35;
+  --leading-body:  1.5;
+  --leading-prose: 1.6;
+
+  --weight-regular: 400;
+  --weight-medium:  510;   /* SF e Segoe Variable leggono 510; gli altri arrotondano a 500 */
+  --weight-semibold: 600;
+
+  /* --- Spazio: base 4px. Stretti dentro un gruppo, larghi tra gruppi. --- */
+  --space-0-5: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* --- Forme --- */
+  --radius-xs: 4px;    /* chip, badge, kbd                    */
+  --radius-sm: 6px;    /* pulsanti, input, voci menu          */
+  --radius-md: 8px;    /* pannelli, tabelle, popover          */
+  --radius-lg: 12px;   /* finestre di dialogo, pannello accesso */
+  --radius-full: 999px;
+
+  /* --- Profondità: quasi piatta. L'ombra serve solo a ciò che galleggia. --- */
+  --shadow-raised: 0 1px 2px oklch(0.25 0.01 85 / 0.06);
+  /* L'anello da 1px sostituisce il bordo: o un bordo o un'ombra, mai entrambi. */
+  --shadow-float:  0 0 0 1px oklch(0.25 0.01 85 / 0.08), 0 8px 24px -6px oklch(0.25 0.01 85 / 0.16);
+  --shadow-panel:  -1px 0 0 oklch(0.25 0.01 85 / 0.06), -12px 0 32px -16px oklch(0.25 0.01 85 / 0.18);
+
+  /* --- Movimento (vedi brand.html § Movimento). Sotto i 300ms, mai ease-in. --- */
+  --ease-out:    cubic-bezier(0.23, 1, 0.32, 1);     /* ingressi e uscite              */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);    /* spostamenti sullo schermo      */
+  --ease-panel:  cubic-bezier(0.32, 0.72, 0, 1);     /* pannello laterale (stile iOS)  */
+  --dur-press:   120ms;
+  --dur-fast:    150ms;
+  --dur-base:    200ms;
+  --dur-panel:   260ms;
+  --dur-slow:    320ms;
+
+  /* --- Dimensioni dell'app --- */
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 56px;
+  --topbar-h: 48px;
+  --row-h: 36px;
+  --control-h: 32px;
+  --control-h-lg: 40px;
+  --panel-w: 480px;
+
+  /* --- Z --- */
+  --z-sticky: 10;
+  --z-sidebar: 30;
+  --z-panel: 40;
+  --z-overlay: 50;
+  --z-toast: 60;
+}

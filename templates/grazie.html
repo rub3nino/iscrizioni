@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="it"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iscrizione ricevuta · {{ name }}</title>
+<link rel="stylesheet" href="/static/tokens.css"><link rel="stylesheet" href="/static/quadra.css"><link rel="stylesheet" href="/static/app.css">
+</head><body>
+<main class="public">
+  <h1 class="h-page">{% if wait %}Sei in lista d'attesa{% else %}Iscrizione ricevuta{% endif %}</h1>
+  {% if number != "" %}<p class="lead">Il numero è <b class="num">{{ number }}</b>.</p>{% else %}<p class="lead">Richiesta ricevuta.</p>{% endif %}
+  {% if wait %}<p>Ti scriviamo se si libera un posto.</p>{% endif %}
+  {% if mail_off %}<p class="small faint">La mail di conferma non è partita. L'iscrizione è comunque registrata.</p>{% endif %}
+</main>
+<script src="/static/form.js"></script>
+</body></html>

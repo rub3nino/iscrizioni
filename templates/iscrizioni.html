@@ -1,0 +1,132 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">Iscrizioni</h1><p class="lead">Cerca una persona, apri la scheda, registra un pagamento o annulla.</p></div>
+<div class="page-head__actions"><a class="btn" href="/admin/iscrizioni.csv">Scarica il CSV</a></div></header>
+<div class="summary">
+  <a class="summary__item" href="/admin/iscrizioni?vista=fare"><b>{{ da_fare }}</b> <span>da fare</span></a>
+  <a class="summary__item" href="/admin/iscrizioni?vista=acconto"><b>{{ acconto }}</b> <span>attendono l'acconto</span></a>
+  <span class="summary__item"><b>{{ posti }}</b> <span>posti su {{ cap }}</span></span>
+  <span class="summary__item"><b>{{ da_incassare }}</b> <span>da incassare</span></span>
+</div>
+<nav class="tabs" aria-label="Viste">
+{% for t in tabs %}<a class="tab" href="/admin/iscrizioni?vista={{ t.id }}&q={{ q }}" {% if t.on %}aria-selected="true"{% else %}aria-selected="false"{% endif %}>{{ t.label }} <span class="count">{{ t.n }}</span></a>{% endfor %}
+</nav>
+<form class="filters" method="get" action="/admin/iscrizioni">
+  <input type="hidden" name="vista" value="{{ vista }}">
+  <label class="field"><span class="field__label">Cerca</span><input class="input" type="search" name="q" value="{{ q }}"></label>
+  <button class="btn" type="submit">Applica i filtri</button>
+</form>
+{% if rows.is_empty() %}
+<div class="empty"><h2>Nessuna iscrizione</h2><p>Quando qualcuno invia il modulo, compare qui.</p></div>
+{% else %}
+<div class="tbl-wrap"><table class="tbl as-cards">
+<thead><tr><th class="num">N.</th><th>Persona</th><th>Pacchetto</th><th>Stato</th><th class="num">Incassato</th></tr></thead>
+<tbody>
+{% for r in rows %}
+<tr>
+  <td class="num" data-label="Numero"><a href="{{ r.href }}">{{ r.number }}</a></td>
+  <td data-label="Persona">{{ r.name }}<span class="cell-sub">{{ r.email }}</span></td>
+  <td data-label="Pacchetto">{{ r.package }}</td>
+  <td data-label="Stato"><span class="{{ r.chip }}"><i class="{{ r.mark }}"></i> {{ r.status }}</span></td>
+  <td class="num" data-label="Incassato">{{ r.paid }}</td>
+</tr>
+{% endfor %}
+</tbody></table></div>
+{% endif %}
+{% if open %}
+<aside class="panel" data-open="true" aria-label="Scheda">
+  <div class="panel__head"><div class="panel__title">{{ d.number }} · {{ d.name }}</div>
+    <div class="panel__head-end"><a class="btn btn--ghost btn--sm" href="/admin/iscrizioni?vista={{ vista }}&q={{ q }}">Chiudi</a></div></div>
+  <div class="panel__body">
+    <p><span class="{{ d.chip }}"><i class="{{ d.mark }}"></i> {{ d.status }}</span></p>
+    <dl class="kv">
+      <dt>Email</dt><dd>{{ d.email }}</dd>
+      <dt>Telefono</dt><dd>{{ d.phone }}</dd>
+      <dt>Nascita</dt><dd>{{ d.birth }}</dd>
+      <dt>Pacchetto</dt><dd>{{ d.package }}</dd>
+      <dt>Prezzo</dt><dd class="num">{{ d.price }}</dd>
+      <dt>Incassato</dt><dd class="num">{{ d.paid }}</dd>
+      <dt>Resto</dt><dd class="num">{{ d.rest }}</dd>
+      <dt>Scadenza acconto</dt><dd>{{ d.due }}</dd>
+      <dt>Genere</dt><dd>{{ d.gender }}</dd>
+      <dt>Città</dt><dd>{{ d.city }}</dd>
+      <dt>Taglia</dt><dd>{{ d.shirt }}</dd>
+      <dt>Note</dt><dd>{{ d.notes }}</dd>
+      <dt>Allergie</dt><dd>{{ d.allergies }}</dd>
+      <dt>Trasporto</dt><dd>{{ d.transport }}</dd>
+      <dt>Responsabile</dt><dd>{{ d.parent_name }} · {{ d.parent_phone }}</dd>
+    </dl>
+    {% if s.can_edit %}
+    <div class="panel-sec">
+      {% if d.can_mail_pay %}<form method="post" action="/admin/iscrizioni/{{ d.id }}/mail"><input type="hidden" name="key" value="dati_pagamento"><button class="btn btn--primary" type="submit">Invia i dati di pagamento</button></form>{% endif %}
+      {% if d.can_pay %}
+      <form method="post" action="/admin/iscrizioni/{{ d.id }}/pagamento" class="stack">
+        <label class="field"><span class="field__label">Importo in euro</span><input class="input" name="euro" inputmode="decimal" required></label>
+        <label class="field"><span class="field__label">Tipo</span><select class="select" name="kind"><option value="acconto">Acconto</option><option value="saldo">Saldo</option></select></label>
+        <label class="field"><span class="field__label">Metodo</span><select class="select" name="method"><option value="bonifico">Bonifico</option><option value="contanti">Contanti</option><option value="altro">Altro</option></select></label>
+        <label class="field"><span class="field__label">Riferimento</span><input class="input" name="reference"></label>
+        <button class="btn btn--primary" type="submit">Registra il pagamento</button>
+      </form>
+      {% endif %}
+    </div>
+    <div class="panel-sec">
+      <h3 class="panel-sec__title">Correggi i dati</h3>
+      <form method="post" action="/admin/iscrizioni/{{ d.id }}/correggi" class="stack">
+        <label class="field"><span class="field__label">Nome</span><input class="input" name="first_name" value="{{ d.first }}" required></label>
+        <label class="field"><span class="field__label">Cognome</span><input class="input" name="last_name" value="{{ d.last }}" required></label>
+        <label class="field"><span class="field__label">Nascita</span><input class="input" type="date" name="birth_date" value="{{ d.birth_raw }}" required></label>
+        <label class="field"><span class="field__label">Email</span><input class="input" type="email" name="email" value="{{ d.email }}" required></label>
+        <label class="field"><span class="field__label">Telefono</span><input class="input" name="phone" value="{{ d.phone_raw }}" required></label>
+        <label class="field"><span class="field__label">Pacchetto</span><select class="select" name="package_id">{% for p in d.pkgs %}<option value="{{ p.id }}" {% if p.on %}selected{% endif %}>{{ p.name }}</option>{% endfor %}</select></label>
+        <label class="field"><span class="field__label">Città</span><input class="input" name="city" value="{{ d.city }}"></label>
+        <label class="field"><span class="field__label">Taglia</span><input class="input" name="shirt" value="{{ d.shirt }}"></label>
+        <label class="field"><span class="field__label">Note</span><textarea class="textarea" name="notes">{{ d.notes }}</textarea></label>
+        <label class="field"><span class="field__label">Allergie</span><textarea class="textarea" name="allergies">{{ d.allergies }}</textarea></label>
+        <label class="field"><span class="field__label">Trasporto</span><input class="input" name="transport" value="{{ d.transport }}"></label>
+        <label class="field"><span class="field__label">Genere</span><input class="input" name="gender" value="{{ d.gender }}"></label>
+        <label class="field"><span class="field__label">Responsabile</span><input class="input" name="parent_name" value="{{ d.parent_name }}"></label>
+        <label class="field"><span class="field__label">Telefono responsabile</span><input class="input" name="parent_phone" value="{{ d.parent_phone }}"></label>
+        <label class="check"><input type="checkbox" name="parent_consent" value="1" {% if d.parent_ok %}checked{% endif %}> Consenso del responsabile</label>
+        <button class="btn" type="submit">Salva i dati</button>
+      </form>
+    </div>
+    <div class="panel-sec">
+      <h3 class="panel-sec__title">Nota interna</h3>
+      <form method="post" action="/admin/iscrizioni/{{ d.id }}/nota" class="stack">
+        <textarea class="textarea" name="body" required></textarea>
+        <button class="btn" type="submit">Aggiungi la nota</button>
+      </form>
+      {% for n in d.notes_i %}<p class="small">{{ n.a }} · {{ n.b }}<br>{{ n.c }}</p>{% endfor %}
+    </div>
+    <div class="panel-sec">
+      <h3 class="panel-sec__title">Mail</h3>
+      <form method="post" action="/admin/iscrizioni/{{ d.id }}/mail" class="stack">
+        <select class="select" name="key">
+          <option value="iscrizione_ricevuta">Iscrizione ricevuta</option>
+          <option value="lista_attesa">Lista d'attesa</option>
+          <option value="dati_pagamento">Dati di pagamento</option>
+          <option value="posto_assicurato">Posto assicurato</option>
+          <option value="termine_scaduto">Termine scaduto</option>
+          <option value="saldato">Saldato</option>
+          <option value="annullata">Annullata</option>
+        </select>
+        <button class="btn" type="submit">Invia di nuovo</button>
+      </form>
+      {% for m in d.mails %}<p class="small">{{ m.a }} · {{ m.b }} · {{ m.c }}</p>{% endfor %}
+    </div>
+    <div class="panel-sec">
+      {% if d.can_release %}<form method="post" action="/admin/iscrizioni/{{ d.id }}/libera"><button class="btn" type="submit">Libera il posto</button></form>{% endif %}
+      {% if d.can_cancel %}<form method="post" action="/admin/iscrizioni/{{ d.id }}/annulla"><button class="btn" type="submit">Annulla l'iscrizione</button></form>{% endif %}
+      {% if d.can_restore %}<form method="post" action="/admin/iscrizioni/{{ d.id }}/ripristina"><button class="btn" type="submit">Ripristina l'iscrizione</button></form>{% endif %}
+      {% if d.can_delete && s.is_owner %}<form method="post" action="/admin/iscrizioni/{{ d.id }}/elimina" data-confirm="Eliminare in modo definitivo i dati di questa persona?"><button class="btn btn--danger" type="submit">Elimina i dati</button></form>{% endif %}
+    </div>
+    {% endif %}
+    <div class="panel-sec"><h3 class="panel-sec__title">Storia</h3>
+      <ol class="timeline">{% for h in d.hist %}<li><time>{{ h.a }}</time> {{ h.b }} · {{ h.c }}</li>{% endfor %}</ol>
+    </div>
+    <div class="panel-sec"><h3 class="panel-sec__title">Pagamenti</h3>
+      {% for p in d.pays %}<p class="small num">{{ p.a }} · {{ p.b }} · {{ p.c }}</p>{% endfor %}
+    </div>
+  </div>
+</aside>
+{% endif %}
+{% include "shell_end.html" %}

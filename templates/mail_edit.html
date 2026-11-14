@@ -1,0 +1,18 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">{{ name }}</h1><p class="lead">Variabili: {{ vars }}</p></div></header>
+<div class="mail-split">
+  <form method="post" action="/admin/mail/{{ key }}" class="stack" id="mail-form">
+    <label class="field"><span class="field__label">Oggetto</span><input class="input" name="subject" value="{{ subject }}" required></label>
+    <label class="field"><span class="field__label">HTML</span><textarea class="textarea" name="html" data-html rows="16">{{ html }}</textarea></label>
+    <label class="field"><span class="field__label">Testo</span><textarea class="textarea" name="text_body" rows="8">{{ text_body }}</textarea></label>
+    <label class="check"><input type="checkbox" name="enabled" value="1" {% if enabled %}checked{% endif %}> Attivo</label>
+    <div>
+      <button class="btn btn--ghost btn--sm" type="button" data-width="600">Desktop</button>
+      <button class="btn btn--ghost btn--sm" type="button" data-width="360">Telefono</button>
+    </div>
+    {% if s.can_edit %}<button class="btn btn--primary" type="submit">Salva il modello</button>{% endif %}
+  </form>
+  {% if s.can_edit %}<form method="post" action="/admin/mail/{{ key }}/prova"><button class="btn" type="submit">Invia una prova a me</button></form>{% endif %}
+  <iframe class="preview-frame" sandbox data-preview title="Anteprima della mail" srcdoc="{{ preview }}"></iframe>
+</div>
+{% include "shell_end.html" %}

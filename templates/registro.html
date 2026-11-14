@@ -1,0 +1,12 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">Registro</h1><p class="lead">Solo aggiunte: chi ha fatto cosa. I log del processo non contengono il testo delle iscrizioni.</p></div>
+{% if s.is_owner %}<div class="page-head__actions"><a class="btn" href="/admin/backup">Scarica il backup</a></div>{% endif %}</header>
+<h2 class="h-section">Azioni</h2>
+<div class="tbl-wrap"><table class="tbl as-cards"><thead><tr><th>Quando</th><th>Chi</th><th>Azione</th><th>Dettaglio</th></tr></thead><tbody>
+{% for r in rows %}<tr><td data-label="Quando">{{ r.a }}</td><td data-label="Chi">{{ r.b }}</td><td data-label="Azione">{{ r.c }}</td><td data-label="Dettaglio">{{ r.b }}</td></tr>{% endfor %}
+</tbody></table></div>
+<h2 class="h-section">Invii</h2>
+<div class="tbl-wrap"><table class="tbl as-cards"><thead><tr><th>Quando</th><th>Modello</th><th>Esito</th></tr></thead><tbody>
+{% for m in mails %}<tr><td data-label="Quando">{{ m.a }}</td><td data-label="Modello">{{ m.b }}</td><td data-label="Esito">{{ m.c }}</td></tr>{% endfor %}
+</tbody></table></div>
+{% include "shell_end.html" %}

@@ -1,0 +1,73 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">Offerta</h1><p class="lead">Prezzi, finestre, posti e acconto. I soldi sono in centesimi nel database e in euro qui.</p></div></header>
+{% if s.can_edit %}
+<form method="post" action="/admin/offerta" class="stack">
+  <div class="grid-2">
+    <label class="field"><span class="field__label">Nome</span><input class="input" name="name" value="{{ name }}" required></label>
+    <label class="field"><span class="field__label">Luogo</span><input class="input" name="place" value="{{ place }}"></label>
+    <label class="field"><span class="field__label">Inizio</span><input class="input" type="date" name="starts_on" value="{{ starts_on }}"></label>
+    <label class="field"><span class="field__label">Fine</span><input class="input" type="date" name="ends_on" value="{{ ends_on }}"></label>
+    <label class="field"><span class="field__label">Posti</span><input class="input" type="number" name="capacity" min="0" value="{{ capacity }}" required></label>
+    <label class="field"><span class="field__label">Valuta</span><input class="input" name="currency" value="{{ currency }}"></label>
+    <label class="field"><span class="field__label">Acconto in euro</span><input class="input" name="deposit" value="{{ deposit }}" required></label>
+    <label class="field"><span class="field__label">Ore per l'acconto</span><input class="input" type="number" name="hours" min="1" max="720" value="{{ hours }}" required></label>
+    <label class="field"><span class="field__label">Età minima</span><input class="input" type="number" name="min_age" value="{{ min_age }}"></label>
+    <label class="field"><span class="field__label">Età massima</span><input class="input" type="number" name="max_age" value="{{ max_age }}"></label>
+    <label class="field"><span class="field__label">Soglia minore</span><input class="input" type="number" name="minor_age" value="{{ minor_age }}"></label>
+    <label class="field"><span class="field__label">IBAN</span><input class="input" name="iban" value="{{ iban }}"></label>
+    <label class="field"><span class="field__label">Intestatario</span><input class="input" name="holder" value="{{ holder }}"></label>
+    <label class="field"><span class="field__label">Causale</span><input class="input" name="pay_note" value="{{ pay_note }}"></label>
+  </div>
+  <button class="btn btn--primary" type="submit">Salva l'offerta</button>
+</form>
+{% endif %}
+<section class="section"><h2 class="h-section">Finestre</h2>
+<div class="tbl-wrap"><table class="tbl as-cards"><thead><tr><th>Nome</th><th>Apre</th><th>Chiude</th><th>Stato</th><th></th></tr></thead><tbody>
+{% for w in windows %}<tr>
+  <td data-label="Nome">{{ w.name }}</td><td data-label="Apre">{{ w.start }}</td><td data-label="Chiude">{{ w.end }}</td>
+  <td data-label="Stato">{% if w.closed %}Chiusa a mano{% else %}Secondo le date{% endif %}</td>
+  <td>{% if s.can_edit %}<form method="post" action="/admin/offerta/finestra/elimina"><input type="hidden" name="id" value="{{ w.id }}"><button class="btn btn--ghost btn--sm" type="submit">Togli</button></form>{% endif %}</td>
+</tr>{% endfor %}
+</tbody></table></div>
+{% if s.can_edit %}
+<form method="post" action="/admin/offerta/finestra" class="stack">
+  <label class="field"><span class="field__label">Nome</span><input class="input" name="name" required></label>
+  <label class="field"><span class="field__label">Apre</span><input class="input" type="datetime-local" name="starts" required></label>
+  <label class="field"><span class="field__label">Chiude</span><input class="input" type="datetime-local" name="ends" required></label>
+  <label class="check"><input type="checkbox" name="closed" value="1"> Chiudi a mano</label>
+  <button class="btn" type="submit">Aggiungi la finestra</button>
+</form>
+{% endif %}
+</section>
+<section class="section"><h2 class="h-section">Pacchetti</h2>
+{% for p in packages %}
+<form method="post" action="/admin/offerta/pacchetto" class="stack">
+  <input type="hidden" name="id" value="{{ p.id }}">
+  <div class="grid-2">
+    <label class="field"><span class="field__label">Nome</span><input class="input" name="name" value="{{ p.name }}" required></label>
+    <label class="field"><span class="field__label">Prezzo in euro</span><input class="input" name="euro" value="{{ p.price }}" required></label>
+    <label class="field"><span class="field__label">Tetto posti</span><input class="input" name="cap" value="{{ p.cap_raw }}"></label>
+    <label class="field"><span class="field__label">Finestra</span><select class="select" name="window_id"><option value="">Sempre, se la porta è aperta</option>{% for w in window_opts %}<option value="{{ w.id }}" {% if w.id == p.window_id %}selected{% endif %}>{{ w.name }}</option>{% endfor %}</select></label>
+    <label class="field"><span class="field__label">Ordine</span><input class="input" type="number" name="sort" value="{{ p.sort }}"></label>
+    <label class="field"><span class="field__label">Etichetta se non si può scegliere</span><input class="input" name="label" value="{{ p.label }}"></label>
+  </div>
+  <label class="field"><span class="field__label">Descrizione</span><textarea class="textarea" name="description">{{ p.description }}</textarea></label>
+  <label class="check"><input type="checkbox" name="active" value="1" {% if p.active %}checked{% endif %}> Attivo</label>
+  {% if s.can_edit %}<button class="btn" type="submit">Salva il pacchetto</button>{% endif %}
+</form>
+{% if s.can_edit %}<form method="post" action="/admin/offerta/pacchetto/elimina"><input type="hidden" name="id" value="{{ p.id }}"><button class="btn btn--ghost btn--sm" type="submit">Togli il pacchetto</button></form>{% endif %}
+{% endfor %}
+{% if s.can_edit %}
+<h3 class="h-group">Nuovo pacchetto</h3>
+<form method="post" action="/admin/offerta/pacchetto" class="stack">
+  <label class="field"><span class="field__label">Nome</span><input class="input" name="name" required></label>
+  <label class="field"><span class="field__label">Prezzo in euro</span><input class="input" name="euro" required></label>
+  <label class="field"><span class="field__label">Tetto posti</span><input class="input" name="cap"></label>
+  <label class="field"><span class="field__label">Finestra</span><select class="select" name="window_id"><option value="">Sempre, se la porta è aperta</option>{% for w in window_opts %}<option value="{{ w.id }}">{{ w.name }}</option>{% endfor %}</select></label>
+  <label class="field"><span class="field__label">Descrizione</span><textarea class="textarea" name="description"></textarea></label>
+  <label class="check"><input type="checkbox" name="active" value="1" checked> Attivo</label>
+  <button class="btn" type="submit">Aggiungi il pacchetto</button>
+</form>
+{% endif %}
+</section>
+{% include "shell_end.html" %}

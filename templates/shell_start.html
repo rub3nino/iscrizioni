@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>{{ title }} · {{ s.event_name }}</title>
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/tokens.css">
+<link rel="stylesheet" href="/static/quadra.css">
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Vai al contenuto</a>
+<div class="app" id="app">
+<aside class="sidebar">
+  <div class="sidebar__brand"><div class="sidebar__brand-name">{{ s.event_name }}</div></div>
+  <nav class="nav" aria-label="Sezioni">
+    <a class="nav__item" href="/admin/iscrizioni" {% if s.page == "iscrizioni" %}aria-current="page"{% endif %}><span>Iscrizioni</span><span class="nav__count">{{ s.count }}</span></a>
+    <a class="nav__item" href="/admin/sito" {% if s.page == "sito" %}aria-current="page"{% endif %}><span>Sul sito</span></a>
+    <a class="nav__item" href="/admin/offerta" {% if s.page == "offerta" %}aria-current="page"{% endif %}><span>Offerta</span></a>
+    <a class="nav__item" href="/admin/liste" {% if s.page == "liste" %}aria-current="page"{% endif %}><span>Liste</span></a>
+    <a class="nav__item" href="/admin/mail" {% if s.page == "mail" %}aria-current="page"{% endif %}><span>Mail</span></a>
+    <a class="nav__item" href="/admin/registro" {% if s.page == "registro" %}aria-current="page"{% endif %}><span>Registro</span></a>
+    {% if s.is_owner %}<a class="nav__item" href="/admin/organizzatori" {% if s.page == "organizzatori" %}aria-current="page"{% endif %}><span>Organizzatori</span></a>{% endif %}
+  </nav>
+  <div class="sidebar__foot">
+    <div class="utente"><div><div class="utente__nome">{{ s.me_name }}</div><div class="utente__ruolo">{{ s.role_label }}</div></div></div>
+    <form method="post" action="/admin/logout"><button class="btn btn--ghost btn--sm" type="submit">Esci</button></form>
+  </div>
+</aside>
+<button type="button" class="scrim" data-scrim hidden aria-label="Chiudi il menu"></button>
+<header class="topbar">
+  <button type="button" class="btn btn--ghost btn--icon topbar__menu" data-menu aria-label="Apri il menu">Menu</button>
+  <nav class="crumbs"><span aria-current="page">{{ title }}</span></nav>
+  <div class="topbar__end">{% if s.saved %}<span class="salvato">Salvato</span>{% endif %}</div>
+</header>
+<main class="main" id="main"><div class="page">
+{% if s.flash != "" %}<div class="callout {% if s.flash_err %}callout--danger{% else %}callout--success{% endif %}"><div class="callout__body"><p>{{ s.flash }}</p></div></div>{% endif %}
+{% if !s.can_edit %}<div class="callout"><div class="callout__body"><p>Puoi leggere ed esportare. Non puoi modificare.</p></div></div>{% endif %}
+{% if !s.mail_on %}<div class="callout callout--attention"><div class="callout__body"><p>La posta non è configurata. In sviluppo il codice di accesso compare nel log del processo, non il testo delle iscrizioni.</p></div></div>{% endif %}

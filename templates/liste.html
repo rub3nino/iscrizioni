@@ -1,0 +1,15 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">Liste</h1><p class="lead">Solo chi non è annullato. Copia il testo per un messaggio o un foglio.</p></div></header>
+{% for list in lists %}
+<section class="section">
+  <div class="section__head"><h2 class="h-section">{{ list.title }}</h2><p>{{ list.lead }}</p></div>
+  {% if list.warn != "" %}<div class="callout"><div class="callout__body"><p>{{ list.warn }}</p></div></div>{% endif %}
+  {% if !list.rows.is_empty() %}
+  <div class="tbl-wrap"><table class="tbl as-cards"><thead><tr>{% for h in list.headers %}<th>{{ h }}</th>{% endfor %}</tr></thead>
+  <tbody>{% for row in list.rows %}<tr>{% for cell in row %}<td>{{ cell }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+  {% endif %}
+  <textarea hidden data-copy-src>{{ list.copy }}</textarea>
+  <button class="btn btn--ghost btn--sm" type="button" data-copy>Copia il testo</button>
+</section>
+{% endfor %}
+{% include "shell_end.html" %}

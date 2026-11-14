@@ -1,0 +1,20 @@
+[Unit]
+Description=Modulo iscrizioni
+After=network.target
+
+[Service]
+Type=simple
+User=iscrizioni
+Group=iscrizioni
+EnvironmentFile=/etc/iscrizioni.env
+WorkingDirectory=/var/lib/iscrizioni
+ExecStart=/usr/local/bin/iscrizioni
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/iscrizioni
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+{% include "shell_start.html" %}
+<header class="page-head"><div class="page-head__text"><h1 class="h-page">Organizzatori</h1><p class="lead">Entrano con l'email e un codice. Resta sempre almeno un proprietario.</p></div></header>
+{% if s.is_owner %}
+<form method="post" action="/admin/organizzatori" class="stack">
+  <label class="field"><span class="field__label">Email</span><input class="input" type="email" name="email" required></label>
+  <label class="field"><span class="field__label">Nome</span><input class="input" name="name"></label>
+  <label class="field"><span class="field__label">Ruolo</span><select class="select" name="role"><option value="admin">Organizzatore</option><option value="viewer">Sola lettura</option><option value="owner">Proprietario</option></select></label>
+  <label class="check"><input type="checkbox" name="notify" value="1"> Avviso a ogni nuova iscrizione</label>
+  <button class="btn btn--primary" type="submit">Invita l'organizzatore</button>
+</form>
+{% endif %}
+{% for r in rows %}
+<form method="post" action="/admin/organizzatori/aggiorna" class="stack">
+  <input type="hidden" name="email" value="{{ r.email }}">
+  <p><b>{{ r.email }}</b> {% if r.name != "" %}· {{ r.name }}{% endif %} <span class="faint">ultimo accesso {{ r.last }}</span></p>
+  <label class="field"><span class="field__label">Ruolo</span><select class="select" name="role">
+    <option value="owner" {% if r.role == "owner" %}selected{% endif %}>Proprietario</option>
+    <option value="admin" {% if r.role == "admin" %}selected{% endif %}>Organizzatore</option>
+    <option value="viewer" {% if r.role == "viewer" %}selected{% endif %}>Sola lettura</option>
+  </select></label>
+  <label class="check"><input type="checkbox" name="notify" value="1" {% if r.notify %}checked{% endif %}> Avviso a ogni nuova iscrizione</label>
+  <label class="check"><input type="checkbox" name="active" value="1" {% if r.active %}checked{% endif %}> Attivo</label>
+  {% if s.is_owner %}<button class="btn" type="submit">Salva l'organizzatore</button>{% endif %}
+</form>
+{% endfor %}
+{% include "shell_end.html" %}
